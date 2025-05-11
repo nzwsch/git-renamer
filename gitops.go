@@ -6,12 +6,11 @@ import (
 	"strings"
 )
 
-// CommandExecutor インターフェース
 type CommandExecutor interface {
 	Output(name string, args ...string) ([]byte, error)
 }
 
-// RealExecutor : 実際にコマンドを実行する
+// RealExecutor: Executes commands in reality
 type RealExecutor struct{}
 
 func (r RealExecutor) Output(name string, args ...string) ([]byte, error) {
@@ -19,7 +18,7 @@ func (r RealExecutor) Output(name string, args ...string) ([]byte, error) {
 	return cmd.Output()
 }
 
-// getFirstCommitDate : executor を注入可能にする
+// getFirstCommitDate: Allows injection of an executor
 func getFirstCommitDate(executor CommandExecutor, dir string) (string, error) {
 	output, err := executor.Output("git", "-C", dir, "log", "--reverse", "--max-parents=0", "HEAD", "--format=%ci")
 	if err != nil {

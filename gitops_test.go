@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// MockExecutor : コマンド実行結果を差し替える
+// MockExecutor: Overrides command execution results
 type MockExecutor struct {
 	OutputFunc func(name string, args ...string) ([]byte, error)
 }
