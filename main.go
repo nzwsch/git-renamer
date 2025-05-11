@@ -26,12 +26,12 @@ func main() {
 			return
 		}
 
-		renamed, err := appendProjectToDate(dir, firstCommitDate)
+		appended, err := appendProjectToDate(dir, firstCommitDate)
 		if err != nil {
 			fmt.Println("Error appending project to date:", err)
 			return
 		}
 
-		fmt.Println("renamed:", renamed)
+		fmt.Println("git-renamer:", appended)
 	}
 }
