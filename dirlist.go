@@ -4,20 +4,35 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func listAllPaths(root string) ([]string, error) {
 	var paths []string
-
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
+		if isHiddenPath(path) {
+			return nil
+		}
 		paths = append(paths, path)
 		return nil
 	})
-
 	return paths, err
+}
+
+func isHiddenPath(path string) bool {
+	cleaned := filepath.Clean(path)
+	parts := strings.Split(cleaned, string(filepath.Separator))
+	for _, part := range parts {
+
+		if strings.HasPrefix(part, ".") && part != "." && part != ".." {
+			return true
+		}
+
+	}
+	return false
 }
 
 func onlyGitDirs(paths []string) []string {
