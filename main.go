@@ -20,12 +20,18 @@ func main() {
 
 	dirs = onlyGitDirs(dirs)
 	for _, dir := range dirs {
-		fmt.Println("Git directory:", dir)
 		firstCommitDate, err := getFirstCommitDate(RealExecutor{}, dir)
 		if err != nil {
 			fmt.Println("Error getting first commit date:", err)
 			return
 		}
-		fmt.Println("First commit date:", firstCommitDate)
+
+		renamed, err := appendProjectToDate(dir, firstCommitDate)
+		if err != nil {
+			fmt.Println("Error appending project to date:", err)
+			return
+		}
+
+		fmt.Println("renamed:", renamed)
 	}
 }
