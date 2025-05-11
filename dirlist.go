@@ -20,14 +20,17 @@ func listAllPaths(root string) ([]string, error) {
 	return paths, err
 }
 
-func onlyDirs(paths []string) []string {
+func onlyGitDirs(paths []string) []string {
 	var dirs []string
 	for _, path := range paths {
 		info, err := os.Stat(path)
 		if err != nil {
 			continue
 		}
-		if info.IsDir() {
+		if !info.IsDir() {
+			continue
+		}
+		if _, err := os.Stat(filepath.Join(path, ".git")); err == nil {
 			dirs = append(dirs, path)
 		}
 	}

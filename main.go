@@ -18,7 +18,7 @@ func main() {
 		return
 	}
 
-	dirs = onlyDirs(dirs)
+	dirs = onlyGitDirs(dirs)
 	for _, dir := range dirs {
 		fmt.Println(dir)
 	}
