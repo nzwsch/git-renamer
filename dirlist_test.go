@@ -61,3 +61,28 @@ func TestListAllPaths(t *testing.T) {
 		t.Errorf("Missing expected path: %s", p)
 	}
 }
+
+func TestIsHiddenPath(t *testing.T) {
+	tests := []struct {
+		path     string
+		expected bool
+	}{
+		{path: "file.txt", expected: false},
+		{path: ".hiddenfile", expected: true},
+		{path: "dir/.hiddenfile", expected: true},
+		{path: "dir/file.txt", expected: false},
+		{path: ".hiddendir/file.txt", expected: true},
+		{path: "dir/.hiddendir/file.txt", expected: true},
+		{path: ".", expected: false},
+		{path: "..", expected: false},
+		{path: "./.hiddenfile", expected: true},
+		{path: "../.hiddenfile", expected: true},
+	}
+
+	for _, test := range tests {
+		result := isHiddenPath(test.path)
+		if result != test.expected {
+			t.Errorf("isHiddenPath(%q) = %v; want %v", test.path, result, test.expected)
+		}
+	}
+}
