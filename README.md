@@ -1,4 +1,4 @@
-# Git Project Renamer
+# Git Renamer
 
 This Go CLI tool recursively scans directories under your home directory, identifies Git repositories, extracts their first commit date, and prints the directory to include the project name and date.
 
@@ -28,12 +28,6 @@ go build -o git-renamer
 ./git-renamer
 ```
 
-This will output something like:
-
-```text
-renamed: renamer-20250511
-```
-
 ## 📁 Example
 
 If you have this project structure:
@@ -48,8 +42,8 @@ If you have this project structure:
 After running the tool:
 
 ```
-myproject/      → myproject-20230101/
-another/        → another-20221201/
+git-renamer: myproject-20250511
+git-renamer: another-20221201
 ```
 
 ## 📚 Requirements
@@ -67,15 +61,11 @@ go test ./...
 
 ## 🛠️ Project Structure
 
+* `datestr.go` - Date string formatter and project name appender in Go.
+* `dirlist.go` - Lists all non-hidden paths and filters directories with git.
+* `gitops.go` - GitOps utility to get first commit date via command execution.
 * `main.go` - The entry point of the CLI
-* `listAllPaths.go` - Walks the file system
-* `gitops.go` - Contains Git-related utilities
-* `rename.go` - Handles renaming logic
 
 ## 📄 License
 
 MIT License
-
----
-
-Feel free to fork or contribute!
