@@ -18,6 +18,7 @@ func main() {
 		return
 	}
 
+	dirs = onlyDirs(dirs)
 	for _, dir := range dirs {
 		fmt.Println(dir)
 	}
