@@ -2,13 +2,16 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	"errors"
 	"os/exec"
 	"strings"
 )
 
+// 実行可能なコマンドを生成する関数型
+var execCommand = exec.Command
+
 func getFirstCommitDate(dir string) (string, error) {
-	cmd := exec.Command("git", "log", "--reverse", "--max-parents=0", "HEAD", "--format=%ci")
+	cmd := execCommand("git", "-C", dir, "log", "--reverse", "--max-parents=0", "HEAD", "--format=%ci")
 	cmd.Dir = dir
 	output, err := cmd.Output()
 	if err != nil {
@@ -20,5 +23,5 @@ func getFirstCommitDate(dir string) (string, error) {
 		dateStr = strings.TrimSpace(dateStr)
 		return dateStr, nil
 	}
-	return "", fmt.Errorf("no commit found")
+	return "", errors.New("no commits found")
 }
