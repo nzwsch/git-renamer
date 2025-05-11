@@ -26,11 +26,9 @@ func isHiddenPath(path string) bool {
 	cleaned := filepath.Clean(path)
 	parts := strings.Split(cleaned, string(filepath.Separator))
 	for _, part := range parts {
-
 		if strings.HasPrefix(part, ".") && part != "." && part != ".." {
 			return true
 		}
-
 	}
 	return false
 }

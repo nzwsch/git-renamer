@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"time"
@@ -16,6 +17,12 @@ func convertToDate(dateStr string) (string, error) {
 }
 
 func appendProjectToDate(project string, dateStr string) (string, error) {
+	if project == "" {
+		return "", errors.New("project path is empty")
+	}
+	if dateStr == "" {
+		return "", errors.New("date string is empty")
+	}
 	formatted, err := convertToDate(dateStr)
 	if err != nil {
 		return "", err
