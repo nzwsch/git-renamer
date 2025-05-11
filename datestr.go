@@ -17,11 +17,8 @@ func convertToDate(dateStr string) (string, error) {
 }
 
 func appendProjectToDate(project string, dateStr string) (string, error) {
-	if project == "" {
-		return "", errors.New("project path is empty")
-	}
-	if dateStr == "" {
-		return "", errors.New("date string is empty")
+	if project == "" || dateStr == "" {
+		return "", errors.New("project and dateStr cannot be empty")
 	}
 	formatted, err := convertToDate(dateStr)
 	if err != nil {
