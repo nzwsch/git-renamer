@@ -86,3 +86,57 @@ func TestIsHiddenPath(t *testing.T) {
 		}
 	}
 }
+
+func TestOnlyGitDirs(t *testing.T) {
+	// Create a temporary directory for testing
+	tempDir := t.TempDir()
+
+	// Create test directories and files
+	testStructure := []string{
+		"dir1/.git/config",
+		"dir2/file.txt",
+		"dir3/.git/config",
+		"dir4/",
+	}
+	for _, path := range testStructure {
+		fullPath := filepath.Join(tempDir, path)
+		if strings.HasSuffix(path, "/") || strings.Contains(path, ".git") {
+			os.MkdirAll(fullPath, 0755)
+		} else {
+			os.MkdirAll(filepath.Dir(fullPath), 0755)
+			os.WriteFile(fullPath, []byte("test"), 0644)
+		}
+	}
+
+	// List all paths in the temporary directory
+	allPaths, err := listAllPaths(tempDir)
+	if err != nil {
+		t.Fatalf("listAllPaths returned an error: %v", err)
+	}
+
+	// Call onlyGitDirs
+	gitDirs := onlyGitDirs(allPaths)
+
+	// Expected git directories
+	expectedGitDirs := []string{
+		filepath.Join(tempDir, "dir1"),
+		filepath.Join(tempDir, "dir3"),
+	}
+
+	// Check if the returned git directories match the expected directories
+	expectedSet := make(map[string]struct{})
+	for _, dir := range expectedGitDirs {
+		expectedSet[dir] = struct{}{}
+	}
+
+	for _, dir := range gitDirs {
+		if _, exists := expectedSet[dir]; !exists {
+			t.Errorf("Unexpected git directory: %s", dir)
+		}
+		delete(expectedSet, dir)
+	}
+
+	for dir := range expectedSet {
+		t.Errorf("Missing expected git directory: %s", dir)
+	}
+}
