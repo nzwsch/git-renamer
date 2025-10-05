@@ -3,6 +3,7 @@ package main
 import (
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -37,13 +38,17 @@ func onlyGitDirs(paths []string) []string {
 	var dirs []string
 	for _, path := range paths {
 		info, err := os.Stat(path)
-		if err != nil {
+		if err != nil || !info.IsDir() {
 			continue
 		}
-		if !info.IsDir() {
+
+		if _, err := os.Stat(filepath.Join(path, ".git")); err != nil {
 			continue
 		}
-		if _, err := os.Stat(filepath.Join(path, ".git")); err == nil {
+
+		cmd := exec.Command("git", "rev-parse", "HEAD")
+		cmd.Dir = path
+		if err := cmd.Run(); err == nil {
 			dirs = append(dirs, path)
 		}
 	}
