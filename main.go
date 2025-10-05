@@ -3,9 +3,17 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func main() {
+	cwd, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Failed to get current directory:", err)
+		return
+	}
+	progName := filepath.Base(cwd)
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println("Failed to get home directory:", err)
@@ -32,6 +40,6 @@ func main() {
 			return
 		}
 
-		fmt.Println("git-renamer:", appended)
+		fmt.Println(progName+":", appended)
 	}
 }
