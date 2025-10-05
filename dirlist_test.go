@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -93,18 +94,53 @@ func TestOnlyGitDirs(t *testing.T) {
 
 	// Create test directories and files
 	testStructure := []string{
-		"dir1/.git/config",
 		"dir2/file.txt",
-		"dir3/.git/config",
 		"dir4/",
 	}
 	for _, path := range testStructure {
 		fullPath := filepath.Join(tempDir, path)
-		if strings.HasSuffix(path, "/") || strings.Contains(path, ".git") {
+		if strings.HasSuffix(path, "/") {
 			os.MkdirAll(fullPath, 0755)
 		} else {
 			os.MkdirAll(filepath.Dir(fullPath), 0755)
 			os.WriteFile(fullPath, []byte("test"), 0644)
+		}
+	}
+
+	// Initialize actual git repos in dir1 and dir3
+	for _, dir := range []string{"dir1", "dir3"} {
+		dirPath := filepath.Join(tempDir, dir)
+		
+		// Ensure directory exists
+		if err := os.MkdirAll(dirPath, 0755); err != nil {
+			t.Fatalf("Failed to create directory %s: %v", dirPath, err)
+		}
+		
+		cmd := exec.Command("git", "init")
+		cmd.Dir = dirPath
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("Failed to initialize git repo in %s: %v, output: %s", dirPath, err, output)
+		}
+		
+		// Create an initial commit so HEAD exists
+		cmd = exec.Command("git", "config", "user.email", "test@example.com")
+		cmd.Dir = dirPath
+		cmd.Run()
+		cmd = exec.Command("git", "config", "user.name", "Test User")
+		cmd.Dir = dirPath
+		cmd.Run()
+		
+		// Create a file and commit it
+		testFile := filepath.Join(dirPath, "test.txt")
+		os.WriteFile(testFile, []byte("test"), 0644)
+		cmd = exec.Command("git", "add", "test.txt")
+		cmd.Dir = dirPath
+		cmd.Run()
+		cmd = exec.Command("git", "commit", "-m", "Initial commit")
+		cmd.Dir = dirPath
+		if err := cmd.Run(); err != nil {
+			t.Fatalf("Failed to create initial commit in %s: %v", dirPath, err)
 		}
 	}
 
