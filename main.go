@@ -1,12 +1,21 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 )
 
+const (
+	colorGreen = "\033[32m"
+	colorReset = "\033[0m"
+)
+
 func main() {
+	noColor := flag.Bool("no-color", false, "Disable colored output")
+	flag.Parse()
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println("Failed to get home directory:", err)
@@ -33,6 +42,10 @@ func main() {
 			return
 		}
 
-		fmt.Println(filepath.Dir(dir)+":", appended)
+		if *noColor {
+			fmt.Println(filepath.Dir(dir)+":", appended)
+		} else {
+			fmt.Println(filepath.Dir(dir)+":", colorGreen+appended+colorReset)
+		}
 	}
 }
