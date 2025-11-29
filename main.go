@@ -16,13 +16,23 @@ func main() {
 	noColor := flag.Bool("no-color", false, "Disable colored output")
 	flag.Parse()
 
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Println("Failed to get home directory:", err)
-		return
+	var targetDir string
+	args := flag.Args()
+
+	if len(args) == 0 {
+		// No argument provided, use home directory
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			fmt.Println("Failed to get home directory:", err)
+			return
+		}
+		targetDir = homeDir
+	} else {
+		// Use the provided directory argument
+		targetDir = args[0]
 	}
 
-	dirs, err := listAllPaths(homeDir)
+	dirs, err := listAllPaths(targetDir)
 	if err != nil {
 		fmt.Println("Error listing paths:", err)
 		return
