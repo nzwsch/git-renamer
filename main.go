@@ -20,13 +20,8 @@ func main() {
 	args := flag.Args()
 
 	if len(args) == 0 {
-		// No argument provided, use home directory
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			fmt.Println("Failed to get home directory:", err)
-			return
-		}
-		targetDir = homeDir
+		// No argument provided, use current directory
+		targetDir = "."
 	} else {
 		// Use the provided directory argument
 		targetDir = args[0]
