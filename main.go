@@ -32,6 +32,14 @@ func main() {
 		targetDir = args[0]
 	}
 
+	// Convert to absolute path
+	absPath, err := filepath.Abs(targetDir)
+	if err != nil {
+		fmt.Println("Failed to get absolute path:", err)
+		return
+	}
+	targetDir = absPath
+
 	dirs, err := listAllPaths(targetDir)
 	if err != nil {
 		fmt.Println("Error listing paths:", err)
