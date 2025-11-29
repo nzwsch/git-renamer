@@ -8,6 +8,21 @@ import (
 	"strings"
 )
 
+func getCurrentTargetDir() (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Abs(cwd)
+}
+
+func getTargetDir(args []string) (string, error) {
+	if len(args) == 0 {
+		return getCurrentTargetDir()
+	}
+	return filepath.Abs(args[0])
+}
+
 func listAllPaths(root string) ([]string, error) {
 	var paths []string
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {

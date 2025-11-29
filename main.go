@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"path/filepath"
 )
 
@@ -16,24 +15,11 @@ func main() {
 	noColor := flag.Bool("no-color", false, "Disable colored output")
 	flag.Parse()
 
-	var targetDir string
-	args := flag.Args()
-
-	if len(args) == 0 {
-		// No argument provided, use current directory
-		targetDir = "."
-	} else {
-		// Use the provided directory argument
-		targetDir = args[0]
-	}
-
-	// Convert to absolute path
-	absPath, err := filepath.Abs(targetDir)
+	targetDir, err := getTargetDir(flag.Args())
 	if err != nil {
-		fmt.Println("Failed to get absolute path:", err)
+		fmt.Println("Failed to get target directory:", err)
 		return
 	}
-	targetDir = absPath
 
 	dirs, err := listAllPaths(targetDir)
 	if err != nil {

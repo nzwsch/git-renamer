@@ -8,6 +8,82 @@ import (
 	"testing"
 )
 
+func TestGetCurrentTargetDir(t *testing.T) {
+	// Get the current target directory
+	targetDir, err := getCurrentTargetDir()
+	if err != nil {
+		t.Fatalf("getCurrentTargetDir returned an error: %v", err)
+	}
+
+	// Check that it's an absolute path
+	if !filepath.IsAbs(targetDir) {
+		t.Errorf("getCurrentTargetDir returned a relative path: %s", targetDir)
+	}
+
+	// Get the current working directory to compare
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get current working directory: %v", err)
+	}
+
+	// Convert cwd to absolute path
+	absCwd, err := filepath.Abs(cwd)
+	if err != nil {
+		t.Fatalf("Failed to get absolute path of cwd: %v", err)
+	}
+
+	// Compare the two
+	if targetDir != absCwd {
+		t.Errorf("getCurrentTargetDir() = %s; want %s", targetDir, absCwd)
+	}
+}
+
+func TestGetTargetDir(t *testing.T) {
+	// Test with empty args (should return current directory)
+	targetDir, err := getTargetDir([]string{})
+	if err != nil {
+		t.Fatalf("getTargetDir with empty args returned an error: %v", err)
+	}
+
+	// Check that it's an absolute path
+	if !filepath.IsAbs(targetDir) {
+		t.Errorf("getTargetDir returned a relative path: %s", targetDir)
+	}
+
+	// Test with a specific directory argument
+	tempDir := t.TempDir()
+	targetDir, err = getTargetDir([]string{tempDir})
+	if err != nil {
+		t.Fatalf("getTargetDir with tempDir returned an error: %v", err)
+	}
+
+	// Check that it's an absolute path
+	if !filepath.IsAbs(targetDir) {
+		t.Errorf("getTargetDir returned a relative path: %s", targetDir)
+	}
+
+	// Convert tempDir to absolute path and compare
+	absTempDir, err := filepath.Abs(tempDir)
+	if err != nil {
+		t.Fatalf("Failed to get absolute path of tempDir: %v", err)
+	}
+
+	if targetDir != absTempDir {
+		t.Errorf("getTargetDir([%s]) = %s; want %s", tempDir, targetDir, absTempDir)
+	}
+
+	// Test with a relative path
+	targetDir, err = getTargetDir([]string{"."})
+	if err != nil {
+		t.Fatalf("getTargetDir with '.' returned an error: %v", err)
+	}
+
+	// Should return absolute path
+	if !filepath.IsAbs(targetDir) {
+		t.Errorf("getTargetDir returned a relative path: %s", targetDir)
+	}
+}
+
 func TestListAllPaths(t *testing.T) {
 	// Create a temporary directory for testing
 	tempDir := t.TempDir()
